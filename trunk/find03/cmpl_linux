@@ -1,4 +1,4 @@
 #!/bin/sh
 
 rm findw03.exe
-gcc -Wl,-s -o find03.exe find03.c hash.c ../conv.c
+gcc -o find03.exe find03.c hash.c ../conv.c
