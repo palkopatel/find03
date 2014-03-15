@@ -25,7 +25,6 @@ SOURCES =	analiz.c \
 		bintree.c \
 		dict.c \
 		findw.c \
-		fnmatch.c \
 		hash.c \
 		wfiles.c \
 		list.c \
@@ -34,7 +33,6 @@ OBJECTS =	analiz$(OSUFFIX) \
 		bintree$(OSUFFIX) \
 		dict$(OSUFFIX) \
 		findw$(OSUFFIX) \
-		fnmatch$(OSUFFIX) \
 		hash$(OSUFFIX) \
 		wfiles$(OSUFFIX) \
 		list$(OSUFFIX) \
@@ -71,15 +69,11 @@ dict$(OSUFFIX): dict.c \
 findw$(OSUFFIX): findw.c \
 		findw.h
 
-fnmatch$(OSUFFIX): fnmatch.c \
-		fnmatch.h
-
 hash$(OSUFFIX): hash.c \
 		findw.h
 
 wfiles$(OSUFFIX): wfiles.c \
-		findw.h \
-		fnmatch.h
+		findw.h
 
 list$(OSUFFIX): list.c \
 		findw.h
