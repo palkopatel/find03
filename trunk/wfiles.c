@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include "findw.h"
-#include "fnmatch.h"
+#include <fnmatch.h>
 #include "platform.h"
 /*-------------------------------------*/
 extern FILE* filelist;
