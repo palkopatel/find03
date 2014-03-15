@@ -15,13 +15,19 @@ extern char unlexem[LEN_ARRAY_LEXEM][LEN_TAG];
 extern char separators[256];/*po chislu simvolov*/
 char spath[MAXPATH + 1]/*maska*/,sdir[MAXPATH + 1];
 extern FILE *std_err;
+extern char cfgdir[MAXPATH];
 /*-------------------------------------*/
 load_separators()
 {
+/*DEBUG: fprintf(stderr, "load_separators() is invoked\n");*/
   FILE* psep;
   int sim=1, i=0;
-  if(!(psep = fopen(FILE_W_SEPARATORS, "rt")))
-    error_open_file(FILE_W_SEPARATORS,17);
+  char filename[MAXPATH];
+  strcpy(filename, cfgdir);
+  strcat(filename, FILE_W_SEPARATORS);
+/*DEBUG: fprintf(stderr, "filename is '%s'\n", filename); */
+  if (!(psep = fopen(filename, "rt")))
+    error_open_file(filename, 17);
 #ifdef _MSDOS
   separators[i++] = 13;
 #endif
@@ -38,14 +44,19 @@ load_separators()
 /*-------------------------------------*/
 open_filelist(void)
 {
-  if(!(filelist=fopen(FILE_W_FILES,"rt")))
-    error_open_file(FILE_W_FILES,1);
+/*DEBUG: fprintf(stderr, "open_filelist() is invoked\n");*/
+  char filename[MAXPATH];
+  strcpy(filename, cfgdir);
+  strcat(filename, FILE_W_FILES);
+  if (!(filelist=fopen(filename, "rt")))
+    error_open_file(filename, 1);
   else return 0;
   return ERROR_OPEN_FILE;
 }
 /*-------------------------------------*/
 char* take_filename_f_file(void)
 {
+/*DEBUG: fprintf(stderr, "take_filename_f_file() is invoked\n");*/
   char* pstr1 = NULL, str1[MAXPATH + 1] = "";
 /*  fscanf(filelist, "%s", str1);*/
   fgets(str1, MAXPATH + 1, filelist);
@@ -61,8 +72,9 @@ char* take_filename_f_file(void)
   return pstr1;
 }
 /*-------------------------------------*/
-void load_lexems(char* filename,char type)
+void load_lexems(char* filename, char type)
 {
+/*DEBUG: fprintf(stderr, "load_lexems() is invoked with file '%s' and type '%c'\n", filename, type);*/
   FILE* lexemfile;
   int i=0;
   char str1[MAXPATH];
@@ -82,6 +94,7 @@ void load_lexems(char* filename,char type)
 /*-------------------------------------*/
 void take_dir(void)
 {
+/*DEBUG: fprintf(stderr, "take_dir() is invoked\n");*/
   convert_directory_separators(spath); /*znaki '\\' v znaki '/'*/
   strcpy(sdir, spath);
 /*nayti posledniy razdelitel' katalogov i obrezat' posle nego stroku*/
@@ -95,6 +108,7 @@ void take_dir(void)
 /*-------------------------------------*/
 char *scan_dir(char *dirname, char *mask)
 {
+/*DEBUG: fprintf(stderr, "scan_dir() is invoked with dirname '%s' and mask '%s'\n", dirname, mask);*/
   static DIR *dir = NULL;
   struct dirent *ent = NULL;
 /*DEBUG: fprintf(std_err, "DIR=%s, MASK=%s\n", dirname, mask);*/
@@ -124,6 +138,7 @@ char *scan_dir(char *dirname, char *mask)
 /*-------------------------------------*/
 char* take_file(void)
 {
+/*DEBUG: fprintf(stderr, "take_file() is invoked\n");*/
   char str1[MAXPATH], filename1[MAXPATH], *ptr;
   if (!(strlen(spath)))/*posledniy fayl po etoy maske nayden v proshlom vyzove*/
   {
@@ -149,3 +164,4 @@ char* take_file(void)
   else ptr = NULL;
   return ptr;
 }
+

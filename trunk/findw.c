@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include "findw.h"
 /*-------------------------------------*/
 FILE* filelist;
@@ -11,6 +12,7 @@ FILE* workfile;
 char lexem[LEN_ARRAY_LEXEM][LEN_TAG];
 char unlexem[LEN_ARRAY_LEXEM][LEN_TAG];
 char tempname[MAXPATH];
+char cfgdir[MAXPATH];
 /*-------------------------------------*/
 extern struct LIST *lst_curr, *lst_root;
 FILE *std_out = NULL, *std_err = NULL;
@@ -18,29 +20,71 @@ char FILE_4_LOG[MAXPATH] = "2log";
 char FILE_4_ERRORS[MAXPATH] = "2errors";
 void remove_log(int);
 /*-------------------------------------*/
-int main(int argc, char *argv[])
+void print_usage_message()
 {
-  int i;
-  if (argc == 1)
-  {
-    fprintf(stderr,"\nusage: findw -{c|d|f {words for search}}\
+  fprintf(stderr,"\nusage: findw -i <path to cfg directory> -{c|d|f {words for search}}\
     \n\t-c\t\t\tcreate temporary bases from file '%s'\
     \n\t-d\t\t\tcreate dictinary (use after '-c')\
     \n\t-f {words for search}\tsearch words from temporary bases\n\n", FILE_W_FILES);
+}
+/* get path to cfg directory from app args */
+int get_cfg_dir(int argc, char *argv[])
+{
+  int i=1;
+  for (; i < argc; i++)
+    if (strstr(argv[i], "-i") && i+1 < argc && NULL == strchr(argv[i+1], '-'))
+      if (!access(argv[i+1], W_OK))
+      {
+        return i+1;
+      }
+      else 
+      {
+        fprintf(stderr, "\nWe don't have access to '%s'!\n", argv[i + 1]);
+        return -1;
+      }
+  return 0;
+}
+/*-------------------------------------*/
+int main(int argc, char *argv[])
+{
+  int i;
+  if (argc <= 1)
+  {
+    print_usage_message();
     return 1;
   }
+
+  int index = get_cfg_dir(argc, argv);
+  if (index < 0)
+  {
+    print_usage_message();
+    return 2;
+  }
+  else if (!index)
+    strcpy(cfgdir, ""); /* current dir is default cfg directory */
+  else
+    strcpy(cfgdir, argv[index]);
+
+/*DEBUG: fprintf(stderr, "cfgdir is '%s'\n", cfgdir);*/
+
   for (i = 1; i < argc; i++)
     if (strstr(argv[i], "-l"))
     {
 /*      if (i + 1 < argc)*/
 /*        if (!strstr(argv[i + 1], "-d") && !strstr(argv[i + 1], "-c")) strcpy(FILE_4_LOG, argv[i + 1]);*/
-      std_out = fopen(FILE_4_LOG, "wt");
+      char filename[MAXPATH];
+      strcpy(filename, cfgdir);
+      strcat(filename, FILE_4_LOG);
+      std_out = fopen(filename, "wt");
       break;
     }
   for (i = 1; i < argc; i++)
     if (strstr(argv[i], "-e"))
     {
-      std_err = fopen(FILE_4_ERRORS, "at");
+      char filename[MAXPATH];
+      strcpy(filename, cfgdir);
+      strcat(filename, FILE_4_ERRORS);
+      std_err = fopen(filename, "at");
       break;
     }
   if (!std_err) std_err = stderr;
@@ -95,7 +139,10 @@ void read_old_hrefs(void)
 {
   FILE *hrefsfile;
   char str1[MAXPATH];
-  if ((hrefsfile = fopen(FILE_W_HREFS, "rt")))
+  char filename[MAXPATH];
+  strcpy(filename, cfgdir);
+  strcat(filename, FILE_W_HREFS);
+  if ((hrefsfile = fopen(filename, "rt")))
   {
     if (fgets(str1, MAXPATH, hrefsfile))
     {
@@ -138,12 +185,21 @@ void working_list(void)
 /*-------------------------------------*/
 void create_tempfiles(void)
 {
+/*DEBUG: fprintf(stderr, "create_tempfiles() is invoked\n");*/
   char str1[MAXPATH], str2[MAXPATH], *ptr;
   unsigned i = 1, ret;
   load_separators();
   ret = open_filelist();
-  load_lexems(FILE_W_LEXEM,'L');
-  load_lexems(FILE_W_UNLEXEM,'U');
+
+  char filename[MAXPATH];
+  strcpy(filename, cfgdir);
+  strcat(filename, FILE_W_LEXEM);
+  load_lexems(filename, 'L');
+
+  strcpy(filename, cfgdir);
+  strcat(filename, FILE_W_UNLEXEM);
+  load_lexems(filename, 'U');
+
   if (ret) /*spisok s faylami ne otkrit -- poprobuem iz 'FILE_W_HREFS'*/
   {
     working_list();
@@ -182,7 +238,10 @@ void remove_log(int c)
   if (std_out != stdout)
   { 
     fclose(std_out);
-    if (!c) remove(FILE_4_LOG);
+    char filename[MAXPATH];
+    strcpy(filename, cfgdir);
+    strcat(filename, FILE_4_LOG);
+    if (!c) remove(filename);
   }
 }
 /*-------------------------------------*/

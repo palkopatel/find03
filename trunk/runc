@@ -1,16 +1,18 @@
 #!/bin/bash
 
+cfg="db/"
+
 while true; do
-  ./findw_t.exe -c -l -e
-  if [ -e "2log" ]; then
+  ./findw_t.exe -i ${cfg} -c -l -e
+  if [ -e "${cfg}2log" ]; then
     echo new pass
-    mv "2log" "1hrefs"
+    mv "${cfg}2log" "${cfg}1hrefs"
   else 
-    if [ -e "1hrefs" ]; then
-      rm "1hrefs"
+    if [ -e "${cfg}1hrefs" ]; then
+      rm "${cfg}1hrefs"
     fi
     break;
   fi
 done
 echo next generation
-./findw_t.exe -d $1 -e
+./findw_t.exe -i ${cfg} -d $1 -e
