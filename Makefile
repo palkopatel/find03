@@ -8,10 +8,10 @@
 ####### Compiler, tools and options
 
 CC	=	gcc
-CFLAGS	=	-fvtable-thunks -O
+CFLAGS	=	-O
 INCPATH	=	
 LINK	=	gcc
-LFLAGS	=	-Wl,-subsystem,console,-strip-all
+LFLAGS	=	-Wl,-subsystem,-strip-all
 LIBS	=	
 UIC	=	
 OSUFFIX =	.o
