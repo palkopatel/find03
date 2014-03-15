@@ -7,9 +7,10 @@
 #include "../platform.h"
 /*-------------------------------------*/
 #define MAXRES 30
+#define CONTENT_TYPE "Content-Type: text/html\n\n"
+
 #ifdef _MSDOS_
-  #define STRING_HEADER "Content-Type: text/html\n\n\
-\n<html><meta charset=\"CP1251\"><head>\n<style type=\"text/css\">\
+  #define STRING_HEADER "<html><meta charset=\"CP1251\"><head>\n<style type=\"text/css\">\
 \np{color:#000077;\nfont-family:\nTahoma,Verdana,Arial;\nfont-size:10pt;}\
 \nh3,h2{color:#ffaa00;\nfont-family:\nTahoma,Verdana,Arial;\ntext-align:center;\nfont-size:18pt;}\
 \n</style>\n</head>\n<body bgcolor=ffffc2>\
@@ -17,8 +18,7 @@
   #define STRING_TITLE "<h3>Слово <b>'%s'</b>&nbsp найдено в %d файлах (файле)</h3>"
   #define STRING_FOUND "<p>Слово '%s' найдено в файле <a href=\"%s/%s\">\"%s\"</a><br>Число повторов = %u</p><hr width=320 height=1>\n"
 #else
-  #define STRING_HEADER "Content-Type: text/html\n\n\
-\n<html><meta charset=\"KOI8-R\"><head>\n<style type=\"text/css\">\
+  #define STRING_HEADER "<html><meta charset=\"KOI8-R\"><head>\n<style type=\"text/css\">\
 \np{color:#000077;\nfont-family:\nTahoma,Verdana,Arial;\nfont-size:10pt;}\
 \nh3,h2{color:#ffaa00;\nfont-family:\nTahoma,Verdana,Arial;\ntext-align:center;\nfont-size:18pt;}\
 \n</style>\n</head>\n<body bgcolor=ffffc2>\
@@ -71,9 +71,10 @@ del_spaces(char* src, char *dest)
 int main(int argc,char**argv)
 {
   int i;
-  fprintf(stdout, STRING_HEADER);
   if(argc==1)
   {
+    fprintf(stdout, CONTENT_TYPE);
+    fprintf(stdout, STRING_HEADER);
     char *ptr, str[MAXPATH], str2[MAXPATH];
 /*    fprintf(stdout,"\nusage: find03 {word for search}\n\n");*/
     ptr = getenv("CONTENT_LENGTH");
@@ -124,6 +125,9 @@ search_machine(char *word)
   int sim = 0, i = 0;
   unsigned wlenrec, fcod;
   char *str1, *str2, *ptr;
+
+/*DEBUG: fprintf(stderr, "Start to find the word '%s'\n", word);*/
+
   if (!(dictfile = fopen(FILE_W_WORD, "rt")))
     my_exit(ERROR_OPEN_FILE, FILE_W_WORD);
   for (wlenrec = PLATFORM_STRING_END; !feof(dictfile) && sim != '\n'; wlenrec++)
@@ -144,7 +148,7 @@ search_machine(char *word)
   {
     fseek(dictfile, (long)wlenrec * (long)fcod, SEEK_SET);
     fgets(str1, wlenrec, dictfile);
-/*DEBUG: fprintf(stderr, "\n%s\n", str1); */
+/*DEBUG: fprintf(stderr, "\n%s\n", str1);*/
     strcpy(str2, str1);
     if (strchr(str2, ';')) *strchr(str2, ';') = 0;
     if (strchr(str2, ' ')) *strchr(str2, ' ') = 0;
