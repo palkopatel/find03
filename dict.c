@@ -7,13 +7,20 @@
 #include "findw.h"
 /*-------------------------------------*/
 extern FILE *std_err;
+extern char cfgdir[MAXPATH];
 /*-------------------------------------*/
 void search(char* pattern)
 {
   FILE* in, *tmpfil/*,*out*/;
   char str[280], truename[280], word[280];
   unsigned num;
-  if (!(in = fopen(FILE_W_TEMPFILES, "rt"))) error_open_file(FILE_W_TEMPFILES, 9);
+
+  char filename[MAXPATH];
+  strcpy(filename, cfgdir);
+  strcat(filename, FILE_W_TEMPFILES);
+  if (!(in = fopen(filename, "rt"))) 
+    error_open_file(filename, 9);
+
 /*  if(!(out=fopen(FILE_W_RESULTS,"wt")))error_open_file(FILE_W_RESULTS,10);*/
   for ( ; !feof(in); )
   {
@@ -29,8 +36,8 @@ void search(char* pattern)
       *strchr(word, '=') = 0;
       if (!strcmp(word, pattern))
       {
- 	fprintf(stdout, "word '%s' (counter: %u) found in the file '%s'\n", pattern, num, truename);
-	break;
+        fprintf(stdout, "word '%s' (counter: %u) found in the file '%s'\n", pattern, num, truename);
+        break;
       }
     }
     fclose(tmpfil);
@@ -51,8 +58,13 @@ void create_dict(int repeater)
   FILE *tempfile, *in;
   char str[RFLEN], str2[6], nametmpfile[MAXPATH];
   unsigned fcod, num;
-  if(!(in = fopen(FILE_W_TEMPFILES, "rt")))
-    error_open_file(FILE_W_TEMPFILES, 12);
+
+  char filename[MAXPATH];
+  strcpy(filename, cfgdir);
+  strcat(filename, FILE_W_TEMPFILES);
+  if(!(in = fopen(filename, "rt")))
+    error_open_file(filename, 12);
+
   generate_word_file(repeater);
 /*  generate_path_file();*/
   while (!feof(in))
@@ -104,7 +116,13 @@ void generate_word_file(int repeater)
   unsigned i, j;
   FILE *wordfile;
   char str1[LEN_LEXEM + 1];
-  if(!(wordfile=fopen(FILE_W_WORD,"wt"))) error_open_file(FILE_W_WORD,14);
+  
+  char filename[MAXPATH];
+  strcpy(filename, cfgdir);
+  strcat(filename, FILE_W_WORD);
+  if(!(wordfile=fopen(filename, "wt")))
+    error_open_file(filename, 14);
+
   for(i=0; i<LEN_LEXEM; i++)
     str1[i]=' ';
   str1[i]=0;
@@ -203,8 +221,11 @@ void open_word_file(char access)
 {
   if(!access)
   {
-    if(-1==(wordfile=open(FILE_W_WORD,O_RDWR /*notlinux: | O_TEXT*/)))
-      error_open_file(FILE_W_WORD,15);
+    char filename[MAXPATH];
+    strcpy(filename, cfgdir);
+    strcat(filename, FILE_W_WORD);
+    if(-1==(wordfile=open(filename, O_RDWR /*notlinux: | O_TEXT*/)))
+      error_open_file(filename, 15);
   }
   else close(wordfile);
 }
@@ -261,8 +282,13 @@ unsigned no_this_file(char* filename)
 #ifdef __TURBOC__
   str_tolower(filename); /*awdeew: also dangerous!!!*/
 #endif
-  if (!(in = fopen(FILE_W_TEMPFILES, "a+t")))
-    error_open_file(FILE_W_TEMPFILES, 7);
+
+  char tmpfilename[MAXPATH];
+  strcpy(tmpfilename, cfgdir);
+  strcat(tmpfilename, FILE_W_TEMPFILES);
+  if (!(in = fopen(tmpfilename, "a+t")))
+    error_open_file(tmpfilename, 7);
+
   fseek(in, 0L, SEEK_SET);
   while (!feof(in))
   {

@@ -14,6 +14,7 @@ typedef struct BT{
 BinTree *tree, *p;
 FILE* outfile;
 extern char tempname[MAXPATH];
+extern char cfgdir[MAXPATH];
 /*-------------------------------------*/
 int MakeTree(char *info);
 int SetLeft(char *info);
@@ -136,7 +137,13 @@ save_tree_2_file(/*char* filename,*/char* sourcefile,unsigned numSourcefile)
   p=tree;
   if(p)round_tree(p,tmpfil);
   fclose(tmpfil);
-  if(!(outfile=fopen(FILE_W_TEMPFILES,"a+t")))error_open_file(FILE_W_TEMPFILES,6);
+
+  char filename[MAXPATH];
+  strcpy(filename, cfgdir);
+  strcat(filename, FILE_W_TEMPFILES);
+  if(!(outfile=fopen(filename, "a+t")))
+    error_open_file(filename, 6);
+
   fseek(outfile,0L,SEEK_END);
   fprintf(outfile,"%s*%s*%u\n",tempname,sourcefile,numSourcefile);
 /*DEBUG: fprintf(stderr, "TEMPORARY FILENAME: %s\n",tempname);*/
