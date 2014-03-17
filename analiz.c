@@ -1,6 +1,8 @@
 /*---------generaciya slovarya---------*/
 /*-------------------------------------*/
 #include <ctype.h> /*eto dlya funkcii tolower()*/
+#include <dirent.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,8 +39,8 @@ void convert_directory_separators(char *str1)
 /*vityanut' iz fayla ego put' i sohranit' v stroku 'path'*/
 split_path_f_filename(char *filename, char *path)
 {
+/*DEBUG: fprintf(stderr, "split_path_f_filename is invoked with filename '%s' and path '%s'\n", filename, path);*/
   char *ptr2;
-/*DEBUG: fprintf(stderr, "inside split_path_f_filename\n");*/
   if (!strlen(filename)) return 255;
   strcpy(path, filename);
   convert_directory_separators(path);  
@@ -58,9 +60,25 @@ split_path_f_filename(char *filename, char *path)
 /*-------------------------------------*/
 false_file_type(char* filename)
 {
+/*DEBUG: fprintf(stderr, "false_file_type() is invoked with filename '%s'\n", filename);*/
   FILE* source;
   unsigned char sim, str1[LEN_PROBE + 1]; /* LEN_PROBE = 255 (by default) */
   int i;
+  DIR* dir = opendir(filename);
+/*DEBUG: fprintf(stderr, "opendir() returned '%p' and errno=%d\n", dir, errno);*/
+  if (errno==ENOENT) 
+  {
+    error_open_file(filename, 3); /* TODO: replace to 31 */
+    return ERROR_OPEN_FILE;
+  }
+  if (dir!=NULL)
+  {
+    struct dirent* dp = readdir(dir);
+    if (dp != NULL && dp->d_type == DT_DIR) {
+      error_open_file(filename, 3); /* TODO: replace to 32 */
+      return FILE_IS_DIRECTORY;
+    }
+  }
   if (!(source = fopen(filename, "rb"))) 
   {
     error_open_file(filename, 3);
@@ -80,6 +98,7 @@ false_file_type(char* filename)
 /*vychlenenie i podschet slov v zadannom fayle*/
 analiz_file(char* filename)
 {
+/*DEBUG: fprintf(stderr, "analiz_file() is invoked with filename '%s'\n", filename);*/
   FILE* source;
   unsigned char sim, r, i;
   char linkname[MAXPATH], path[MAXPATH] = "";
@@ -109,7 +128,7 @@ analiz_file(char* filename)
 	 else if (is_false_tag(tag)) F++;
 	 if (!parse_href(tag, linkname)) /*razberemsya s drugimi poleznimi tegami*/
 	 {
-/*DEBUG: fprintf(stderr, "linkname = %s\n", linkname); */
+/*DEBUG: fprintf(stderr, "linkname = %s\n", linkname);*/
 	   char strt[MAXPATH];
            if (strchr(linkname, '\\')) convert_directory_separators(linkname);
            strcpy(strt, linkname);

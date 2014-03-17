@@ -11,6 +11,7 @@
 #define NOT_ENOUGH_MEMORY 3
 #define TOO_MANY_FILES 4
 #define BAD_FILE_TYPE 5
+#define FILE_IS_DIRECTORY 6
 
 #define LEN_ARRAY_LEXEM 100
 #define LEN_TAG 15
