@@ -5,7 +5,7 @@
 /*#define _MSDOS_*/
 /*****************************************************************/
 
-#ifdef _MSDOS_
+#if defined(_MSDOS_) || defined(__CYGWIN__)
   #ifndef __TURBOC__
     #define __TURBOC__
   #endif

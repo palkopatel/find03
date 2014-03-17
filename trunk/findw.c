@@ -163,8 +163,10 @@ void read_old_hrefs(void)
 /*-------------------------------------*/
 void working_list(void)
 {
+/*DEBUG: fprintf(stderr, "working_list() is invoked\n");*/
   unsigned i = 1;
   char str2[MAXPATH], str1[MAXPATH];
+  int code;
 /*DEBUG: for (lst_curr = lst_root; lst_curr; lst_curr = lst_curr->pnext) fprintf(stderr, "\t%s\n", lst_curr->info);*/
 /*#ifdef FILE_W_HREFS*/
   read_old_hrefs();
@@ -173,11 +175,15 @@ void working_list(void)
   {
     strcpy(str1, lst_curr->info);
     if (i = no_this_file(str1)) /*noviy li eto fayl*/
-      if (!analiz_file(str1)) /*mozhet bit' oshibka pri otkritii fayla*/
+    {
+      code = analiz_file(str1);
+/*DEBUG: fprintf(stderr, "analiz_file() returned code '%d'\n", code);*/
+      if (!code) /*mozhet bit' oshibka pri otkritii fayla*/
       {
         mkstemp2(str2);
         save_tree_2_file(str1, i);
       }
+    }
     lst_curr->fl = 1; /*fayl obrabotan*/    
   }
 /*DEBUG: for (lst_curr = lst_root; lst_curr; lst_curr = lst_curr->pnext) fprintf(stderr, "\t%s\n", lst_curr->info);*/
