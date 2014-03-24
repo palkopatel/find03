@@ -141,7 +141,10 @@ analiz_file(char* filename)
            if (strchr(linkname, '\\')) convert_directory_separators(linkname);
            strcpy(strt, linkname);
            str_tolower(strt);
-           if (strstr(strt, "mailto:") == strt || strstr(strt, "javascript:") == strt)
+/*DEBUG: fprintf(stderr, "linkname before adding is '%s'\n", strt);*/
+           if (strstr(strt, "mailto:") == strt || strstr(strt, "javascript:") == strt ||
+               strstr(strt, "http://") != NULL || strstr(strt, "https://") != NULL ||
+               strchr(strt, '?') != NULL || strchr(strt, '*') != NULL)
              continue; /* takogo vida ssilki ne nuzhni */
 #ifdef HTML_URI
            if (strrchr(linkname, '#')) *strrchr(linkname, '#') = 0; /*rezat' ssilki vnutri odnogo dokumenta*/
@@ -163,6 +166,7 @@ analiz_file(char* filename)
        {
          if (strlen(lex) > MIN_LEN_OF_LEXEM) /*korotkie slova budem ignorirovat'*/
          {
+
 /*DEBUG: fprintf(std_err, "raw lex = %s\n", lex);*/
             if (strlen(lex) >= LEN_LEXEM) i = LEN_LEXEM - 1;
             lex[i] = 0;
