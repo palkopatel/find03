@@ -55,6 +55,7 @@ void generate_path_file(void);
 /*-------------------------------------*/
 void create_dict(int repeater)
 {
+/*DEBUG: fprintf(stderr, "create_dict() is invoked with repeater=%d\n", repeater);*/
   FILE *tempfile, *in;
   char str[RFLEN], str2[6], nametmpfile[MAXPATH];
   unsigned fcod, num;
@@ -84,6 +85,7 @@ void create_dict(int repeater)
     while (!feof(tempfile))
     {
       if (fscanf(tempfile, "%s", str) < 1) break;
+/*DEBUG: fprintf(stderr, "create_dict() reads str='%s'\n", str);*/
       num = atoi(strchr(str, '=') + 1);
       *strchr(str, '=') = 0;
       save_word_2_file(repeater, str, fcod, num);
@@ -142,8 +144,9 @@ void generate_word_file(int repeater)
 'numOfWordreps' - chislo povtorov slova v fayle s nomerom (iz hesha) 'numOfFile'
 'repeater' - skol'ko real'no povtorov budet zapisano v fayl
 */
-void save_word_2_file(int repeater,char* word,unsigned numOfFile,char numOfWordreps)
+void save_word_2_file(int repeater, char* word, unsigned numOfFile, char numOfWordreps)
 {
+/*DEBUG: fprintf(stderr, "save_word_2_file() is invoked with repeater=%d, word='%s', numOfFile=%d, numOfWordreps=%d\n", repeater, word, numOfFile, numOfWordreps);*/
   unsigned int cod = hash(word, 0), i, min = 0, transf = 0, minindex = 0;
   char str[100], str2[100];
   while (1)
@@ -167,6 +170,7 @@ void save_word_2_file(int repeater,char* word,unsigned numOfFile,char numOfWordr
       word[i]=0;
       sprintf(str,"%s;%5u=%3u;",word,numOfFile,numOfWordreps);
       write(wordfile,str,LEN_LEXEM+1+reclen);
+/*DEBUG: fprintf(stderr, "save_word_2_file() returns with new word\n");*/
       return;
     }
     if(strcmp(str, word))
@@ -197,6 +201,7 @@ void save_word_2_file(int repeater,char* word,unsigned numOfFile,char numOfWordr
 	    lseek(wordfile, -reclen, SEEK_CUR);
 	    sprintf(str, "%5u=%3u;", numOfFile, numOfWordreps);
 	    write(wordfile, str, reclen);
+/*DEBUG: fprintf(stderr, "save_word_2_file() returns after storing word\n");*/
 	    return;
 	  }
 	}
@@ -215,10 +220,12 @@ void save_word_2_file(int repeater,char* word,unsigned numOfFile,char numOfWordr
       return;
     }
   }
+/*DEBUG: fprintf(stderr, "save_word_2_file() returns\n");*/
 }
 /*-------------------------------------*/
 void open_word_file(char access)
 {
+/*DEBUG: fprintf(stderr, "open_word_file() is invoked with access='%d'\n", access);*/
   if(!access)
   {
     char filename[MAXPATH];
