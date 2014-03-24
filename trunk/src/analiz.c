@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "findw.h"
+#include "../include/findw.h"
 /*-------------------------------------*/
 #define LEN_TAGINSIDE (100 * LEN_TAG)
 /*-------------------------------------*/

@@ -16,27 +16,30 @@ LIBS	=
 UIC	=	
 OSUFFIX =	.o
 
+include_dirs := include
+source_dirs  := src
+objects_dirs := bin
+
 ####### Files
 
-HEADERS =	findw.h \
-		fnmatch.h \
-		platform.h
-SOURCES =	analiz.c \
-		bintree.c \
-		dict.c \
-		findw.c \
-		hash.c \
-		wfiles.c \
-		list.c \
-		conv.c
-OBJECTS =	analiz$(OSUFFIX) \
-		bintree$(OSUFFIX) \
-		dict$(OSUFFIX) \
-		findw$(OSUFFIX) \
-		hash$(OSUFFIX) \
-		wfiles$(OSUFFIX) \
-		list$(OSUFFIX) \
-		conv$(OSUFFIX) 
+HEADERS =	${include_dirs}/findw.h \
+		${include_dirs}/platform.h
+SOURCES =	${source_dirs}/analiz.c \
+		${source_dirs}/bintree.c \
+		${source_dirs}/dict.c \
+		${source_dirs}/findw.c \
+		${source_dirs}/hash.c \
+		${source_dirs}/wfiles.c \
+		${source_dirs}/list.c \
+		${source_dirs}/conv.c
+OBJECTS =	${objects_dirs}/analiz$(OSUFFIX) \
+		${objects_dirs}/bintree$(OSUFFIX) \
+		${objects_dirs}/dict$(OSUFFIX) \
+		${objects_dirs}/findw$(OSUFFIX) \
+		${objects_dirs}/hash$(OSUFFIX) \
+		${objects_dirs}/wfiles$(OSUFFIX) \
+		${objects_dirs}/list$(OSUFFIX) \
+		${objects_dirs}/conv$(OSUFFIX) 
 UICDECLS =	
 TARGET	=	findw_t.exe
 
@@ -45,10 +48,11 @@ TARGET	=	findw_t.exe
 
 all: $(TARGET)
 
-$(TARGET): $(UICDECLS) $(OBJECTS) 
+$(TARGET): obj_dirs $(UICDECLS) $(OBJECTS) 
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
 
-
+obj_dirs :
+	mkdir -p bin
 
 clean:
 	-rm -f $(OBJECTS) $(TARGET)
@@ -56,26 +60,5 @@ clean:
 
 ####### Compile
 
-analiz$(OSUFFIX): analiz.c \
-		findw.h
-
-bintree$(OSUFFIX): bintree.c \
-		findw.h
-
-dict$(OSUFFIX): dict.c \
-		platform.h \
-		findw.h
-
-findw$(OSUFFIX): findw.c \
-		findw.h
-
-hash$(OSUFFIX): hash.c \
-		findw.h
-
-wfiles$(OSUFFIX): wfiles.c \
-		findw.h
-
-list$(OSUFFIX): list.c \
-		findw.h
-
-conv$(OSUFFIX): conv.c
+${objects_dirs}/%.o : ${source_dirs}/%.c
+	gcc -o $@ -c $< ${CFLAGS}

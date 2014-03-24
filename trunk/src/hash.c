@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "findw.h"
+#include "../include/findw.h"
 /*-------------------------------------*/
 extern FILE *std_err;
 /*-------------------------------------*/
