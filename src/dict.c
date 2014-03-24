@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "platform.h"
-#include "findw.h"
+#include "../include/platform.h"
+#include "../include/findw.h"
 /*-------------------------------------*/
 extern FILE *std_err;
 extern char cfgdir[MAXPATH];

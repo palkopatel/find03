@@ -1,4 +1,4 @@
 #!/bin/sh
 
 rm findw_t.exe
-gcc -Wl,-s -O -o findw_t.exe findw.c analiz.c dict.c wfiles.c hash.c list.c bintree.c fnmatch.c conv.c
+gcc -Wl,-s -O -o findw_t.exe src/findw.c src/analiz.c src/dict.c src/wfiles.c src/hash.c src/list.c src/bintree.c src/conv.c

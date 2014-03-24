@@ -3,7 +3,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
-#include "findw.h"
+#include "../include/findw.h"
 /*-------------------------------------*/
 struct LIST *lst_curr = NULL, *lst_root = NULL;
 /*-------------------------------------*/

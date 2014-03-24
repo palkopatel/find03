@@ -4,7 +4,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
-#include "findw.h"
+#include "../include/findw.h"
 /*-------------------------------------*/
 typedef struct BT{
        char *info/*[LEN_LEXEM + 1]*/;

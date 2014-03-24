@@ -5,7 +5,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include "findw.h"
+#include "../include/findw.h"
 /*-------------------------------------*/
 FILE* filelist;
 FILE* workfile;
@@ -263,7 +263,7 @@ void my_exit(int error_code, char *fromf)
 {
   int c;
   fprintf(std_err, "\nIncorrect exit with code = %d\
-  \n(see macro's value in findw.h)\
+  \n(see macro's value in ../include/findw.h)\
   \n(hint: func name = %s)\n", error_code, fromf);
   if (lst_root) 
     for (c = 0, lst_curr = lst_root; lst_curr; lst_curr = lst_curr->pnext) 

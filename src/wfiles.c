@@ -5,9 +5,9 @@
 #include <string.h>
 #include <sys/types.h>
 #include <dirent.h>
-#include "findw.h"
+#include "../include/findw.h"
 #include <fnmatch.h>
-#include "platform.h"
+#include "../include/platform.h"
 /*-------------------------------------*/
 extern FILE* filelist;
 extern char lexem[LEN_ARRAY_LEXEM][LEN_TAG];
