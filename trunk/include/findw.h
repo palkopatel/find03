@@ -4,7 +4,7 @@
 #define HTML_URI 1 /*rezat' ssilki vnutri odnogo dokumenta*/
 /*------------------------------------*/
 #define MAXPATH 1024
-#define TMPFILE(str) mkstemp2(str)
+/*#define TMPFILE(str) mkstemp2(str)*/
 /*------------------------------------*/
 #define ERROR_OPEN_FILE 1
 #define EXIT_ON_END_FILELIST 2
@@ -15,12 +15,12 @@
 
 #define LEN_ARRAY_LEXEM 100
 #define LEN_TAG 15
-#define LEN_LEXEM 8 /* !!! ne rekomenduetsya menyat' eto znachenie !!! (p.s. 15/5/03 -- teper' vrode mozhno) */
+#define LEN_LEXEM 20
 #define MIN_LEN_OF_LEXEM 3
 #define MAX_NUM_ONE_LEXEM 64
 #define HASH_ARRAY_SEPARATOR (0xff/LEN_LEXEM)
 #define LEN_FILE_W_WORD 0xfffe
-#define LEN_FILE_W_PATH LEN_FILE_W_WORD 
+#define LEN_FILE_W_PATH LEN_FILE_W_WORD
 #define LEN_PROBE 255 /* skol'ko znakov analizirovat' dlya opredeleniya tipa fayla (fayl 'analiz.c') */
 #define NUM_TRIAL 4 /* chislo popitok pri otkritii faylov (ne realizivano -- variant smotri v fayle 'bintree.c' funkciya 'save_tree_2_file(...)') */
 #define LEN_META_DESC 10
