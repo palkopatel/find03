@@ -2,7 +2,7 @@
 /*-------------------------------------*/
 #include <stdio.h>
 #include <string.h>
-#include "../findw.h"
+#include "../include/findw.h"
 /*-------------------------------------*/
 unsigned hash(char* word,char enter)
 {

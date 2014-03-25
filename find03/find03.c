@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../findw.h"
-#include "../platform.h"
+#include "../include/findw.h"
+#include "../include/platform.h"
 /*-------------------------------------*/
 #define MAXRES 30
 #define CONTENT_TYPE "Content-Type: text/html\n\n"
