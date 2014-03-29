@@ -5,25 +5,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../include/findw.h"
+#include "../include/bintree.h"
 /*-------------------------------------*/
-typedef struct BT{
-       char *info/*[LEN_LEXEM + 1]*/;
-       char counter;
-       struct BT *pFather, *pLeft, *pRight;
-}BinTree;
 BinTree *tree, *p;
 FILE* outfile;
 extern char tempname[MAXPATH];
 extern char cfgdir[MAXPATH];
 /*-------------------------------------*/
-int MakeTree(char *info);
-int SetLeft(char *info);
-int SetRight(char *info);
-char* create_and_goto(char Case,char* info);
-int round_tree(BinTree* p,FILE* tmpfil);
-/*-------------------------------------*/
 /*sozdanie kornya binarnogo dereva (B.D.)*/
-MakeTree(char *info)
+int MakeTree(char *info)
 {
   if (!(tree=malloc(sizeof(BinTree)))) my_exit(NOT_ENOUGH_MEMORY, "mtree-1");
   if (!(tree->info = strdup(info))) my_exit(NOT_ENOUGH_MEMORY, "mtree-2");
@@ -34,7 +24,7 @@ MakeTree(char *info)
 }
 /*-------------------------------------*/
 /*sozganie levogo cyna dlya uzla *p*/
-SetLeft(char *info)
+int SetLeft(char *info)
 {
   BinTree* q;
   if(!(q=malloc(sizeof(BinTree)))) my_exit(NOT_ENOUGH_MEMORY, "leftt-1");
@@ -48,7 +38,7 @@ SetLeft(char *info)
 }
 /*-------------------------------------*/
 /*sozdanie pravogo syna dlya uzla *p*/
-SetRight(char *info)
+int SetRight(char *info)
 {
   BinTree* q;
   if(!(q=malloc(sizeof(BinTree)))) my_exit(NOT_ENOUGH_MEMORY, "rightt-1");
@@ -96,7 +86,7 @@ char* create_and_goto(char Case,char* info)
 'p'    - eto tekushiy element
 */
 /*-------------------------------------*/
-place_lex_to_tree(char* str1)
+int place_lex_to_tree(char* str1)
 {
   int r=1;
   if(!tree)
@@ -123,9 +113,8 @@ place_lex_to_tree(char* str1)
   return 1;/*leksema zanesena v derevo*/
 }
 /*sohranity' derevo v fayl (simmetrichnym obhodom)*/
-save_tree_2_file(/*char* filename,*/char* sourcefile,unsigned numSourcefile)
+int save_tree_2_file(char* sourcefile,unsigned numSourcefile)
 {
-  char strwork[10];
   FILE* tmpfil;
 /*
   int i;
@@ -151,9 +140,8 @@ save_tree_2_file(/*char* filename,*/char* sourcefile,unsigned numSourcefile)
   return 0;
 }
 /*--------------------------------------*/
-round_tree(BinTree* p,FILE* tmpfil)
+int round_tree(BinTree* p, FILE* tmpfil)
 {
-  char str[2*LEN_LEXEM];
   if(p->pLeft) round_tree(p->pLeft,tmpfil);
   if(p->counter)
   {

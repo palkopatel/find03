@@ -5,8 +5,9 @@
 #include <string.h>
 #include <sys/types.h>
 #include <dirent.h>
-#include "../include/findw.h"
 #include <fnmatch.h>
+#include "../include/analiz.h"
+#include "../include/findw.h"
 #include "../include/platform.h"
 /*-------------------------------------*/
 extern FILE* filelist;
@@ -17,7 +18,7 @@ char spath[MAXPATH + 1]/*maska*/,sdir[MAXPATH + 1];
 extern FILE *std_err;
 extern char cfgdir[MAXPATH];
 /*-------------------------------------*/
-load_separators()
+void load_separators()
 {
 /*DEBUG: fprintf(stderr, "load_separators() is invoked\n");*/
   FILE* psep;
@@ -42,7 +43,7 @@ load_separators()
 /*DEBUG:delay(2000);*/
 }
 /*-------------------------------------*/
-open_filelist(void)
+int open_filelist()
 {
 /*DEBUG: fprintf(stderr, "open_filelist() is invoked\n");*/
   char filename[MAXPATH];
@@ -54,7 +55,7 @@ open_filelist(void)
   return ERROR_OPEN_FILE;
 }
 /*-------------------------------------*/
-char* take_filename_f_file(void)
+char* take_filename_f_file()
 {
 /*DEBUG: fprintf(stderr, "take_filename_f_file() is invoked\n");*/
   char* pstr1 = NULL, str1[MAXPATH + 1] = "";
@@ -92,7 +93,7 @@ void load_lexems(char* filename, char type)
   fclose(lexemfile);
 }
 /*-------------------------------------*/
-void take_dir(void)
+void take_dir()
 {
 /*DEBUG: fprintf(stderr, "take_dir() is invoked\n");*/
   convert_directory_separators(spath); /*znaki '\\' v znaki '/'*/
@@ -106,7 +107,7 @@ void take_dir(void)
   else strcpy(sdir, "./");
 }
 /*-------------------------------------*/
-char *scan_dir(char *dirname, char *mask)
+char* scan_dir(char* dirname, char* mask)
 {
 /*DEBUG: fprintf(stderr, "scan_dir() is invoked with dirname '%s' and mask '%s'\n", dirname, mask);*/
   static DIR *dir = NULL;
@@ -133,10 +134,10 @@ char *scan_dir(char *dirname, char *mask)
 /*DEBUG:*/ fprintf(std_err, "found file %s%s\n", dirname, ent->d_name);
       return ent->d_name;
     }
-  }  
+  }
 }
 /*-------------------------------------*/
-char* take_file(void)
+char* take_file()
 {
 /*DEBUG: fprintf(stderr, "take_file() is invoked\n");*/
   char str1[MAXPATH], filename1[MAXPATH], *ptr;
@@ -148,9 +149,9 @@ char* take_file(void)
     take_dir();/*vychlenit' iz maski katalog ('sdir')*/
   }
 /*DEBUG: fprintf(std_err,"before scandir\n");*/
-  if (!(ptr = scan_dir(sdir, spath))) 
+  if (!(ptr = scan_dir(sdir, spath)))
     strcpy(filename1, "");
-  else 
+  else
     strcpy(filename1, ptr);
 /*DEBUG: fprintf(std_err,"after scandir\n");*/
   if (!strlen(filename1))

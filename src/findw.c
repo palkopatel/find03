@@ -5,7 +5,12 @@
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include "../include/analiz.h"
+#include "../include/bintree.h"
+#include "../include/dict.h"
 #include "../include/findw.h"
+#include "../include/list.h"
+#include "../include/wfiles.h"
 /*-------------------------------------*/
 FILE* filelist;
 FILE* workfile;
@@ -18,7 +23,6 @@ extern struct LIST *lst_curr, *lst_root;
 FILE *std_out = NULL, *std_err = NULL;
 char FILE_4_LOG[MAXPATH] = "2log";
 char FILE_4_ERRORS[MAXPATH] = "2errors";
-void remove_log(int);
 /*-------------------------------------*/
 void print_usage_message()
 {
@@ -33,15 +37,18 @@ int get_cfg_dir(int argc, char *argv[])
   int i=1;
   for (; i < argc; i++)
     if (strstr(argv[i], "-i") && i+1 < argc && NULL == strchr(argv[i+1], '-'))
+    {
       if (!access(argv[i+1], W_OK))
       {
         return i+1;
       }
-      else 
+      else
       {
         fprintf(stderr, "\nWe don't have access to '%s'!\n", argv[i + 1]);
         return -1;
       }
+
+    }
   return 0;
 }
 /*-------------------------------------*/
@@ -90,8 +97,8 @@ int main(int argc, char *argv[])
   if (!std_err) std_err = stderr;
   if (!std_out) std_out = stdout;
   for (i = 1; i < argc; i++)
-    if (strstr(argv[i], "-c")) 
-    { 
+    if (strstr(argv[i], "-c"))
+    {
       create_tempfiles();
       remove_log(0);
       break;
@@ -110,7 +117,7 @@ int main(int argc, char *argv[])
     }
   for (i = 1; i < argc; i++)
     if (strstr(argv[i], "-f"))
-      for (i++; i < argc; i++) search(argv[i]);
+      for (i++; i < argc; i++) search_word(argv[i]);
   return 0;
 }
 /*-------------------------------------*/
@@ -146,7 +153,7 @@ void read_old_hrefs(void)
   {
     if (fgets(str1, MAXPATH, hrefsfile))
     {
-      if (!lst_root) 
+      if (!lst_root)
       {
         destroy_returns(str1);
         make_first_inlist(str1);
@@ -174,7 +181,7 @@ void working_list(void)
   while (!list_empty())
   {
     strcpy(str1, lst_curr->info);
-    if (i = no_this_file(str1)) /*noviy li eto fayl*/
+    if ((i = no_this_file(str1)) != 0) /*noviy li eto fayl*/
     {
       code = analiz_file(str1);
 /*DEBUG: fprintf(stderr, "analiz_file() returned code '%d'\n", code);*/
@@ -184,7 +191,7 @@ void working_list(void)
         save_tree_2_file(str1, i);
       }
     }
-    lst_curr->fl = 1; /*fayl obrabotan*/    
+    lst_curr->fl = 1; /*fayl obrabotan*/
   }
 /*DEBUG: for (lst_curr = lst_root; lst_curr; lst_curr = lst_curr->pnext) fprintf(stderr, "\t%s\n", lst_curr->info);*/
 }
@@ -242,7 +249,7 @@ void create_tempfiles(void)
 void remove_log(int c)
 {
   if (std_out != stdout)
-  { 
+  {
     fclose(std_out);
     char filename[MAXPATH];
     strcpy(filename, cfgdir);
@@ -261,12 +268,12 @@ void error_open_file(char* filename,int errorcod)
 /*-------------------------------------*/
 void my_exit(int error_code, char *fromf)
 {
-  int c;
+  int c = 0;
   fprintf(std_err, "\nIncorrect exit with code = %d\
   \n(see macro's value in ../include/findw.h)\
   \n(hint: func name = %s)\n", error_code, fromf);
-  if (lst_root) 
-    for (c = 0, lst_curr = lst_root; lst_curr; lst_curr = lst_curr->pnext) 
+  if (lst_root)
+    for (c = 0, lst_curr = lst_root; lst_curr; lst_curr = lst_curr->pnext)
       if (!lst_curr->fl)
       {
         fprintf(std_out, "%s\n", lst_curr->info);

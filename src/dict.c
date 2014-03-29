@@ -3,13 +3,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../include/platform.h"
+#include <unistd.h>
+#include "../include/dict.h"
 #include "../include/findw.h"
+#include "../include/hash.h"
+#include "../include/platform.h"
 /*-------------------------------------*/
+int reclen;
+int wordfile;
 extern FILE *std_err;
 extern char cfgdir[MAXPATH];
 /*-------------------------------------*/
-void search(char* pattern)
+void search_word(char* pattern)
 {
   FILE* in, *tmpfil/*,*out*/;
   char str[280], truename[280], word[280];
@@ -18,7 +23,7 @@ void search(char* pattern)
   char filename[MAXPATH];
   strcpy(filename, cfgdir);
   strcat(filename, FILE_W_TEMPFILES);
-  if (!(in = fopen(filename, "rt"))) 
+  if (!(in = fopen(filename, "rt")))
     error_open_file(filename, 9);
 
 /*  if(!(out=fopen(FILE_W_RESULTS,"wt")))error_open_file(FILE_W_RESULTS,10);*/
@@ -47,12 +52,6 @@ void search(char* pattern)
 /*  fclose(tmpfil);*/
 }
 /*-------------------------------------*/
-int reclen;
-#define NUM_RECORD 5
-/*-------------------------------------*/
-int wordfile;
-void generate_path_file(void);
-/*-------------------------------------*/
 void create_dict(int repeater)
 {
 /*DEBUG: fprintf(stderr, "create_dict() is invoked with repeater=%d\n", repeater);*/
@@ -70,12 +69,12 @@ void create_dict(int repeater)
 /*  generate_path_file();*/
   while (!feof(in))
   {
-/*    if (fscanf(in, "%s", str) < 1) break;/*awdeew: eta funkciya schitaet probeli koncom vvoda*/
+/*    if (fscanf(in, "%s", str) < 1) break;*/ /*awdeew: eta funkciya schitaet probeli koncom vvoda*/
     if (!fgets(str, RFLEN, in)) break; /*konec fayla*/
 /*DEBUG:*/ fprintf(std_err, "tmp_file_name = %s\n", str);
     fcod = atoi(strcpy(str2, strrchr(str, '*') + 1));
     *strchr(str, '*') = 0;
-    if (!(tempfile = fopen(str, "rt"))) 
+    if (!(tempfile = fopen(str, "rt")))
     {
       error_open_file(str,13);
       continue; /*propustit' fayl*/
@@ -103,10 +102,10 @@ void create_dict(int repeater)
   char str1[MAXPATH + 1 + LEN_META_DESC + 1];
   if (!(file1 = fopen(FILE_W_PATH, "wt"))) error_open_file(FILE_W_PATH, 141);
   for (i = 0; i < MAXPATH; i++)
-    str1[i] = ' '; /*zabit' imya fayla
-  str1[i++] = '*'; /*razdelitel'
+    str1[i] = ' '; //zabit' imya fayla
+  str1[i++] = '*'; //razdelitel'
   for ( ; i < MAXPATH + 1 + LEN_META_DESC; i++)
-    str1[i] = ' '; /*zabit' opisanie fayla
+    str1[i] = ' '; //zabit' opisanie fayla
   str1[i] = 0;
   for(i = 0; i < LEN_FILE_W_PATH; i++)
     fprintf(file1, "%s", str1);
@@ -118,7 +117,7 @@ void generate_word_file(int repeater)
   unsigned i, j;
   FILE *wordfile;
   char str1[LEN_LEXEM + 1];
-  
+
   char filename[MAXPATH];
   strcpy(filename, cfgdir);
   strcat(filename, FILE_W_WORD);
@@ -216,7 +215,7 @@ void save_word_2_file(int repeater, char* word, unsigned numOfFile, char numOfWo
 	  sprintf(str, "%5u=%3u;", numOfFile, numOfWordreps);
 	  write(wordfile, str, reclen);
       }
-/*else; /*umret pretendent*/
+/*else;*/ /*umret pretendent*/
       return;
     }
   }
@@ -300,7 +299,7 @@ unsigned no_this_file(char* filename)
   while (!feof(in))
   {
     fseek(in, 0L, SEEK_CUR); /* eto dolzhnmo bit' ne nado? */
-/*    if (fscanf(in, "%s", str) < 1) break;/*konec fayla*/
+/*    if (fscanf(in, "%s", str) < 1) break;*/ /*konec fayla*/
     if (!fgets(str, RFLEN, in)) break; /*konec fayla*/
 /*DEBUG: fprintf(std_err, "inside no_this_file: %s\n", str);*/
     strcpy(str2, str);

@@ -11,7 +11,6 @@ unsigned hash_old(char* word,char enter)
 {
   int i=0,len=strlen(word);
   static unsigned cod,loop;
-  unsigned c;
   if(!enter)/*kod uzhe est', no on zanyat*/
   {
     for(loop=cod=i=0; i<len; i++)
@@ -24,7 +23,7 @@ unsigned hash_old(char* word,char enter)
     if(cod+1==LEN_FILE_W_WORD)
     {
       if(!loop) loop++;
-      else 
+      else
       {
         fprintf(std_err,"\nERROR! Found many hash-values too!\n");
 	my_exit(TOO_MANY_FILES, "hash-old");
@@ -40,7 +39,6 @@ unsigned hash(char* word,char enter)
   int i = 0, len = strlen(word);
   static unsigned long cod;
   static int loop;
-  unsigned c;
   if (!enter) /*kod uzhe est', no on zanyat*/
   {
     for (loop = cod = i = 0; i < len; i++)
@@ -54,8 +52,8 @@ unsigned hash(char* word,char enter)
       if (!loop) loop++;
       else
       {
-	fprintf(std_err, "\nERROR! Found many hash-values too!\n");
-	my_exit(TOO_MANY_FILES, "hash");
+        fprintf(std_err, "\nERROR! Found many hash-values too!\n");
+        my_exit(TOO_MANY_FILES, "hash");
       }
       cod = 0;
     }
