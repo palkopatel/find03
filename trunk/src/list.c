@@ -4,13 +4,11 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "../include/findw.h"
+#include "../include/list.h"
 /*-------------------------------------*/
 struct LIST *lst_curr = NULL, *lst_root = NULL;
-/*-------------------------------------*/
-void make_first_inlist(char*);
-void insert_elem_inlist(char*);
-int exist_inlist(char *);
 /*-------------------------------------*/
 /*sozdanie pervogo elementa spiska*/
 void make_first_inlist(char *info)
@@ -34,7 +32,7 @@ void insert_elem_inlist(char *info)
 }
 /*-------------------------------------*/
 /*sushestvuet li fayl v spiske*/
-exist_inlist(char *linkname)
+int exist_inlist(char *linkname)
 {
   struct LIST *pwork;
   for (pwork = lst_root; pwork; pwork = pwork->pnext)
@@ -44,7 +42,7 @@ exist_inlist(char *linkname)
 /*-------------------------------------*/
 /*-------------------------------------*/
 /*dobavit' v spisok imay fayla, na kotoroe est' ssilka iz tekushego*/
-add_new_link_2_filelist(char* path, char* linkname)
+int add_new_link_2_filelist(char* path, char* linkname)
 {
 /*DEBUG: fprintf(stderr, "add_new_link_2_filelist is invoked with path '%s' and linkname '%s'\n", path, linkname);*/
   static char* rel_name = NULL;

@@ -19,7 +19,7 @@
 #define MIN_LEN_OF_LEXEM 3
 #define MAX_NUM_ONE_LEXEM 64
 #define HASH_ARRAY_SEPARATOR (0xff/LEN_LEXEM)
-#define LEN_FILE_W_WORD 0xfffe
+#define LEN_FILE_W_WORD 0xffffe
 #define LEN_FILE_W_PATH LEN_FILE_W_WORD
 #define LEN_PROBE 255 /* skol'ko znakov analizirovat' dlya opredeleniya tipa fayla (fayl 'analiz.c') */
 #define NUM_TRIAL 4 /* chislo popitok pri otkritii faylov (ne realizivano -- variant smotri v fayle 'bintree.c' funkciya 'save_tree_2_file(...)') */
@@ -47,32 +47,8 @@
 #define GOTO_R 51
 #define GOTO_F 52
 /*-------------------------------------*/
-struct LIST {
-       char fl;
-       char* info;
-       struct LIST* pnext;
-};
-/*-------------------------------------*/
-int open_filelist(void);
-char* take_filename_f_file(void);
-void load_lexems(char*,char);
-char* take_file(void);
-void take_dir(void);
-int analiz_file(char*);
-int save_tree_2_file(char*,unsigned);
-void generate_word_file(int);
-char* format_word(char*,unsigned,char);
-void open_word_file(char);
-unsigned hash(char*,char);
-void save_word_2_file(int,char*,unsigned,char);
-void error_open_file(char*,int);
-unsigned no_this_file(char*);
-void create_dict(int);
-void create_tempfiles(void);
-void str_tolower(char*);
-void convert_directory_separators(char*);
+void remove_log(int);
+void error_open_file(char*, int);
+void create_tempfiles();
 void my_exit(int, char*);
-int add_new_link_2_filelist(char*, char*);
-int place_lex_to_tree(char*);
-void convert_2_uppercase(char *);
 #endif
