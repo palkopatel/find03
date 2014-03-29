@@ -26,7 +26,7 @@ unsigned hash_old(char* word,char enter)
       else
       {
         fprintf(std_err,"\nERROR! Found many hash-values too!\n");
-	my_exit(TOO_MANY_FILES, "hash-old");
+        my_exit(TOO_MANY_FILES, "hash-old");
       }
       cod=0;
     }
