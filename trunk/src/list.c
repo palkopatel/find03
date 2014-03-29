@@ -1,5 +1,6 @@
 /*---------rabota so spiskom-----------*/
 /*-------------------------------------*/
+#include <limits.h>
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
@@ -35,87 +36,55 @@ void insert_elem_inlist(char *info)
 /*sushestvuet li fayl v spiske*/
 exist_inlist(char *linkname)
 {
-  struct LIST *pwork; 
-  for (pwork = lst_root; pwork; pwork = pwork->pnext) 
+  struct LIST *pwork;
+  for (pwork = lst_root; pwork; pwork = pwork->pnext)
     if (!strcmp(linkname, pwork->info)) return 1;
   return 0; /*eto noviy fayl*/
 }
 /*-------------------------------------*/
-/*inversiya stroki*/
-void str_rev(char *str)
-{
-  int i, len = strlen(str), len2;
-  char sim;
-  len2 = len-- / 2;
-  for (i = 0; i < len2; i++)
-  {
-    sim = str[i];
-    str[i] = str[len - i];
-    str[len - i] = sim;
-  }    
-}
 /*-------------------------------------*/
 /*dobavit' v spisok imay fayla, na kotoroe est' ssilka iz tekushego*/
 add_new_link_2_filelist(char* path, char* linkname)
 {
-  char *ptr1 = strstr(linkname, "./"),
-       *pathdup = strdup(path),
-       *ptr2;
-/*DEBUG: fprintf(stderr, "before adding %s <--> %s\n", linkname, path);*/
-  if (!pathdup) return 2; /*NOT_ENOUGH_MEMORY!!!*/
-  /*else */ptr2 = /*strstr(pathdup, "./")*/pathdup;
-  if (ptr1)
-    if (ptr1 == linkname) /*if (ptr1 - 1 != linkname)*/
-      strcpy(linkname, linkname + 2); /* vikinem priznak tekushego kataloga ("./")*/
-  if (strlen(ptr2) > 1)
-    if (ptr2[0] == '.' && ptr2[1] == '/')
-      ptr2 += 2; /*'pathdup' menyat' nel'zya, t.k. nado sdelat' free(pathdup)*/
-/*  if (ptr2)
+/*DEBUG: fprintf(stderr, "add_new_link_2_filelist is invoked with path '%s' and linkname '%s'\n", path, linkname);*/
+  static char* rel_name = NULL;
+  static int rel_name_size = 0;
+  char abs_name[PATH_MAX];
+  char* ptr = rel_name;
+  int new_size = strlen(path)+strlen(linkname)+1;
+
+  if (rel_name_size < new_size || rel_name == NULL)
   {
-   if (ptr2 == pathdup)
-     ptr2 += 2;
-  }
-  else ptr2 = pathdup;*/
-  str_rev(ptr2);
-  while (1) /*pereborka otnositel'nogo puti v absolyutniy (koren' -- v startovom kataloge)*/
-  {
-/*DEBUG: fprintf(stderr, "inside while(1) %s <--> %s\n", linkname, ptr2);*/
-    ptr1 = strstr(linkname, "../");
-    if (!ptr1) break; /*razbor zavershyon*/
-    ptr2 = strchr(ptr2, '/');
-    if (ptr2) /*ptr1 zdes' vsegda istina*/
+    ptr = realloc(rel_name, new_size);
+    rel_name_size = new_size;
+    if(ptr == NULL)
     {
-      ptr2++;
-      strcpy(linkname, ptr1 + 3);
+/*DEBUG:*/ fprintf(stderr, "add_new_link_2_filelist(): NOT_ENOUGH_MEMORY for '%d' bytes\n", rel_name_size);
+      free(rel_name);
+      rel_name_size = 0;
+      rel_name = NULL;
+      return 2; /* NOT_ENOUGH_MEMORY!!! */
     }
-    else /*noviy put' vozmozhno s oshibkoy*/
-    {
-      free(pathdup); 
-      return 1; 
-    }
+    else
+      rel_name = ptr;
   }
-/*DEBUG: fprintf(stderr, "after normalizing %s <--> %s\n", linkname, ptr2);*/
-  if (ptr2)
+
+  strcpy(rel_name, path);
+  strcat(rel_name, linkname);
+  if (!realpath(rel_name, abs_name))
   {
-    char str1[MAXPATH], *pwork;
-    int end = strlen(ptr2) - 1;
-    str_rev(ptr2);
-    if (ptr2[end] != '/')
-      if (!(pwork = strrchr(ptr2, '/'))) goto NO_CHANGE;
-      else *(pwork + 1) = 0;
-    strcpy(str1, linkname);
-    strcpy(linkname, ptr2);
-    strcat(linkname, str1);
+/*DEBUG:*/ fprintf(stderr, "add_new_link_2_filelist(): an error is contained in the filename '%s' or it isn't exist!\n", rel_name);
+    return 1;
   }
-/*DEBUG: fprintf(stderr, "after reversing %s <--> %s\n", linkname, ptr2);*/
-NO_CHANGE:;
-  if (!lst_root) make_first_inlist(linkname); 
-  else 
-    if (!exist_inlist(linkname))
-      insert_elem_inlist(linkname);
-/*DEBUG { struct LIST *pwork; for (pwork = lst_root; pwork; pwork = pwork->pnext) fprintf(stderr, "a-r m_f_inlist() %s (%d)\n", pwork->info, strlen(pwork->info)); }
-*/
-  free(pathdup);
+
+/*DEBUG: fprintf(stderr, "add_new_link_2_filelist(): abs_name is '%s'\n", abs_name);*/
+  if (!lst_root)
+    make_first_inlist(abs_name);
+  else
+    if (!exist_inlist(abs_name))
+      insert_elem_inlist(abs_name);
+
+/*  free(rel_name); TODO: add 'rel_name' to GC and free this memory on program exit */
   return 0;
 }
 /*-------------------------------------*/
