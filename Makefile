@@ -8,7 +8,7 @@
 ####### Compiler, tools and options
 
 CC	=	gcc
-CFLAGS	=	-O
+CFLAGS	=	-O -Wall
 INCPATH	=	
 LINK	=	gcc
 LFLAGS	=	-Wl,-subsystem,-strip-all
