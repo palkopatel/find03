@@ -1,9 +1,12 @@
 /*---------glavnyy faylik--------------*/
 /*-------------------------------------*/
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../include/conv.h"
 #include "../include/findw.h"
+#include "../include/hash.h"
 #include "../include/platform.h"
 /*-------------------------------------*/
 #define MAXRES 30
@@ -44,27 +47,26 @@ unsigned char hex_2_i(unsigned char sim)
   if (isalpha(sim)) sim = toupper(sim);
   if (sim >= '0' && sim <='9') return (sim - '0');
   if (sim >= 'A' && sim <='F') return (sim - 55); /* 'A' == 65*/
+  return '-';
 }
 /*-------------------------------------*/
-del_spaces(char* src, char *dest)
+int convert_percent_symbols(char *dest)
 {
-  int len = strlen(src), i, j;
+  int len = strlen(dest), i, j;
   char *ptr;
-  if (src == dest) 
-  {
-    if (!(ptr = strdup(src)))
-      return 1; /*net pamyati!!!*/
-  }
-  else ptr = src;
+  if (!(ptr = strdup(dest)))
+    return 1; /*net pamyati!!!*/
   for (j = i = 0; i < len; i++)
-    if (ptr[i] == '%'/* && ptr[i + 1] != '+' && ptr[i + 2] != '+'*/) 
-    {              
+  {
+    if (ptr[i] == '%')
+    {
       dest[j++] = (hex_2_i(ptr[i + 1]) << 4) + hex_2_i(ptr[i + 2]);
       i += 2;
     }
     else dest[j++] = ptr[i];
+  }
   dest[j] = 0;
-  if (src == dest) free(ptr);
+  free(ptr);
   return 0;
 }
 /*-------------------------------------*/
@@ -72,29 +74,35 @@ int main(int argc,char**argv)
 {
   int i;
   if(argc==1)
-  {
+  { /* TODO: http code looks like un-working. */
     fprintf(stdout, CONTENT_TYPE);
     fprintf(stdout, STRING_HEADER);
-    char *ptr, str[MAXPATH], str2[MAXPATH];
+    char *ptr, str[MAXPATH];
+    *str = 0;
 /*    fprintf(stdout,"\nusage: find03 {word for search}\n\n");*/
     ptr = getenv("CONTENT_LENGTH");
-    fgets(str, atoi(ptr) + 1, stdin);
-    std_out = stdout; /*smotret' nizhe*/
-    if ((ptr = strchr(str, '=')))
+    if (ptr != NULL && strlen(ptr) > 0)
     {
-      strcpy(str, ptr + 1);
-      del_spaces(str, str);
-      convert_2_uppercase(str);
-      while (str)
-        if (!(ptr = strrchr(str, '+')))
-          break;
-        else
+      fgets(str, atoi(ptr) + 1, stdin);
+      std_out = stdout; /*smotret' nizhe*/
+      if ((ptr = strchr(str, '=')))
+      {
+        strcpy(str, ptr + 1);
+        convert_percent_symbols(str);
+        convert_2_uppercase(str);
+        while (str)
         {
-          results_analiz(search_machine(ptr + 1), ptr + 1);
-          *ptr = 0;
+          if (!(ptr = strrchr(str, '+')))
+            break;
+          else
+          {
+            results_analiz(search_machine(ptr + 1), ptr + 1);
+            *ptr = 0;
+          }
         }
-      results_analiz(search_machine(str), str);
-      return 0;
+        results_analiz(search_machine(str), str);
+        return 0;
+    }
     }
     return 1;
   }
@@ -105,7 +113,7 @@ int main(int argc,char**argv)
   else fprintf(std_out, STRING_HEADER);
   for(i = 1; i < argc; i++)
     if (strcmp(argv[i], "--file"))
-    { 
+    {
       convert_2_uppercase(argv[i]);
       results_analiz(search_machine(argv[i]), argv[i]);
     }
@@ -119,7 +127,7 @@ void cut_word(char *str1, int i)
     str1[i - 1] = 0;
 }
 /*-------------------------------------*/
-search_machine(char *word)
+int search_machine(char *word)
 {
   FILE *dictfile;
   int sim = 0, i = 0;
@@ -138,7 +146,7 @@ search_machine(char *word)
   }
 
 /*DEBUG: fprintf(stderr, "Allocate memory for two strings in %u bytes\n", wlenrec);*/
-  
+
   if (!(str1 = (char*)malloc(wlenrec + 1))) my_exit(NOT_ENOUGH_MEMORY, "");
   if (!(str2 = (char*)malloc(wlenrec + 1))) my_exit(NOT_ENOUGH_MEMORY, "");
   cut_word(word, i); /*obrezhem dlinnie slova*/

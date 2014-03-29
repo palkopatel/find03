@@ -1,4 +1,4 @@
 #!/bin/sh
 
-rm findw03.exe
-gcc -o find03.exe find03.c hash.c ../src/conv.c
+#rm findw03
+gcc -Wall -Dstd_err=stderr -o find03 find03.c ../src/hash.c ../src/conv.c

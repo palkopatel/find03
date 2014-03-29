@@ -9,5 +9,5 @@ if [ "$#" -eq 0 ]; then
 fi
 
 cd db
-../find03/find03.exe --file "$@"
+../find03/find03 --file "$@"
 cd ..
