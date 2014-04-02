@@ -1,6 +1,14 @@
 #ifndef _BT_H_
 #define _BT_H_
 
+enum {
+  CREATE_L = 48,
+  CREATE_R,
+  GOTO_L,
+  GOTO_R,
+  GOTO_F,
+};
+
 typedef struct BT{
        char *info/*[LEN_LEXEM + 1]*/;
        char counter;

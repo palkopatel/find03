@@ -122,7 +122,7 @@ int save_tree_2_file(char* sourcefile,unsigned numSourcefile)
     fprintf(stderr, "try open file %s\n", tempname);
   if (i == NUM_TRIAL) error_open_file(tempname,5);
 */
-  if (!(tmpfil = fopen(tempname, "w"))) error_open_file(tempname, 5);
+  if (!(tmpfil = fopen(tempname, "w"))) error_open_file(tempname, EOF_CODE_5);
   p=tree;
   if(p)round_tree(p,tmpfil);
   fclose(tmpfil);
@@ -131,7 +131,7 @@ int save_tree_2_file(char* sourcefile,unsigned numSourcefile)
   strcpy(filename, cfgdir);
   strcat(filename, FILE_W_TEMPFILES);
   if(!(outfile=fopen(filename, "a+t")))
-    error_open_file(filename, 6);
+    error_open_file(filename, EOF_CODE_6);
 
   fseek(outfile,0L,SEEK_END);
   fprintf(outfile,"%s*%s*%u\n",tempname,sourcefile,numSourcefile);

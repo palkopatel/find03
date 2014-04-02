@@ -71,7 +71,7 @@ int add_new_link_2_filelist(char* path, char* linkname)
   strcat(rel_name, linkname);
   if (!realpath(rel_name, abs_name))
   {
-/*DEBUG:*/ fprintf(stderr, "add_new_link_2_filelist(): an error is contained in the filename '%s' or it isn't exist!\n", rel_name);
+/*DEBUG: fprintf(stderr, "add_new_link_2_filelist(): an error is contained in the filename '%s' or it isn't exist!\n", rel_name);*/
     return 1;
   }
 
