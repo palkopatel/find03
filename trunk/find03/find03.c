@@ -181,8 +181,8 @@ int search_machine(char *word)
       fcod = atoi(str2);
       if (sim && fcod)
       {
-	res[i].fnum = fcod;
-	res[i++].count = sim;
+        res[i].fnum = fcod;
+        res[i++].count = sim;
       }
     }
   }

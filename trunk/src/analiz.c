@@ -58,32 +58,38 @@ int false_file_type(char* filename)
 {
 /*DEBUG: fprintf(stderr, "false_file_type() is invoked with filename '%s'\n", filename);*/
   FILE* source;
-  unsigned char sim; /* LEN_PROBE = 255 (by default) */
-  int i;
+  unsigned char sim;
+  int sym_counter, binary_counter = 0;
   DIR* dir = opendir(filename);
 /*DEBUG: fprintf(stderr, "opendir() returned '%p' and errno=%d\n", dir, errno);*/
   if (errno==ENOENT)
   {
-    error_open_file(filename, 3); /* TODO: replace to 31 */
+/*DEBUG:*/ fprintf(stderr, "false_file_type(): opendir() says '%s'\n", strerror(errno));
+    error_open_file(filename, EOF_CODE_31);
     return ERROR_OPEN_FILE;
   }
   if (dir!=NULL)
   {
     struct dirent* dp = readdir(dir);
     if (dp != NULL && dp->d_type == DT_DIR) {
-      error_open_file(filename, 3); /* TODO: replace to 32 */
+      error_open_file(filename, EOF_CODE_32);
       return FILE_IS_DIRECTORY;
     }
   }
   if (!(source = fopen(filename, "rb")))
   {
-    error_open_file(filename, 3);
+    error_open_file(filename, EOF_CODE_3);
     return ERROR_OPEN_FILE;
   }
-  for (i = 0, sim = fgetc(source); !feof(source) && i < LEN_PROBE; sim = fgetc(source))
+  for (sym_counter = 0, sim = fgetc(source); !feof(source) && sym_counter < BINARY_PROBE_LENGHT; sim = fgetc(source), sym_counter++)
   {
-    if (sim < '\t')
-      return BAD_FILE_TYPE; /* vstretilsya simvil kotorogo v tekstovom fayle bit' ne mozhet */
+    if (sim < '\t') /* vstretilsya simvil kotorogo v tekstovom fayle bit' ne mozhet */
+        binary_counter++;
+    if (binary_counter >= BINARY_SIMBOLS_LIMIT)
+    {
+      fclose(source);
+      return BAD_FILE_TYPE;
+    }
   }
   fclose(source);
   return 0;
@@ -101,7 +107,7 @@ int analiz_file(char* filename)
     return BAD_FILE_TYPE;
   if (!(source = fopen(filename, "rt")))
   {
-    error_open_file(filename, 3);
+    error_open_file(filename, EOF_CODE_3);
     return ERROR_OPEN_FILE;
   }
   strcpy(lex, "");
@@ -182,6 +188,7 @@ int analiz_file(char* filename)
 	    }
      }
   }
+  fclose(source);
   return 0;
 }
 /*-------------------------------------*/

@@ -10,7 +10,7 @@
 #include "../include/findw.h"
 #include "../include/platform.h"
 /*-------------------------------------*/
-extern FILE* filelist;
+/*extern FILE* filelist;*/
 extern char lexem[LEN_ARRAY_LEXEM][LEN_TAG];
 extern char unlexem[LEN_ARRAY_LEXEM][LEN_TAG];
 extern char separators[256];/*po chislu simvolov*/
@@ -28,7 +28,7 @@ void load_separators()
   strcat(filename, FILE_W_SEPARATORS);
 /*DEBUG: fprintf(stderr, "filename is '%s'\n", filename); */
   if (!(psep = fopen(filename, "rt")))
-    error_open_file(filename, 17);
+    error_open_file(filename, EOF_CODE_17);
 #ifdef _MSDOS
   separators[i++] = 13;
 #endif
@@ -43,19 +43,19 @@ void load_separators()
 /*DEBUG:delay(2000);*/
 }
 /*-------------------------------------*/
-int open_filelist()
+FILE* open_filelist()
 {
 /*DEBUG: fprintf(stderr, "open_filelist() is invoked\n");*/
+  FILE* filelist;
   char filename[MAXPATH];
   strcpy(filename, cfgdir);
   strcat(filename, FILE_W_FILES);
   if (!(filelist=fopen(filename, "rt")))
-    error_open_file(filename, 1);
-  else return 0;
-  return ERROR_OPEN_FILE;
+    error_open_file(filename, EOF_CODE_1);
+  return filelist;
 }
 /*-------------------------------------*/
-char* take_filename_f_file()
+char* take_filename_f_file(FILE* filelist)
 {
 /*DEBUG: fprintf(stderr, "take_filename_f_file() is invoked\n");*/
   char* pstr1 = NULL, str1[MAXPATH + 1] = "";
@@ -79,7 +79,7 @@ void load_lexems(char* filename, char type)
   FILE* lexemfile;
   int i=0;
   char str1[MAXPATH];
-  if(!(lexemfile=fopen(filename,"rt")))error_open_file(filename,2);
+  if(!(lexemfile=fopen(filename,"rt")))error_open_file(filename, EOF_CODE_2);
   while(1)
   {
     if(!fscanf(lexemfile,"%s",str1));/*break;*/ /*kazhetsya eto ne nuzhno*/
@@ -137,13 +137,13 @@ char* scan_dir(char* dirname, char* mask)
   }
 }
 /*-------------------------------------*/
-char* take_file()
+char* take_file(FILE* filelist)
 {
 /*DEBUG: fprintf(stderr, "take_file() is invoked\n");*/
   char str1[MAXPATH], filename1[MAXPATH], *ptr;
   if (!(strlen(spath)))/*posledniy fayl po etoy maske nayden v proshlom vyzove*/
   {
-    if (!(ptr = take_filename_f_file())) /*poisk iz fayla zavershyen*/
+    if (!(ptr = take_filename_f_file(filelist))) /*poisk iz fayla zavershyen*/
       return BROKEN_SEARCH;
     strcpy(spath, ptr);/*vzyat' sleduyuchuyu masku poiska*/
     take_dir();/*vychlenit' iz maski katalog ('sdir')*/

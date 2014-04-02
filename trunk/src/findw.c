@@ -1,5 +1,6 @@
 /*---------glavnyy faylik--------------*/
 /*-------------------------------------*/
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,7 +13,6 @@
 #include "../include/list.h"
 #include "../include/wfiles.h"
 /*-------------------------------------*/
-FILE* filelist;
 FILE* workfile;
 char lexem[LEN_ARRAY_LEXEM][LEN_TAG];
 char unlexem[LEN_ARRAY_LEXEM][LEN_TAG];
@@ -108,10 +108,12 @@ int main(int argc, char *argv[])
     {
       int repeater;
       if (2 == strlen(argv[i]))
-	if (i + 1 < argc) repeater = atoi(argv[i + 1]);
-	else repeater = 1;
-      else repeater = atoi(strcpy(argv[i], strstr(argv[i], "-d") + 2));
+        if (i + 1 < argc) repeater = atoi(argv[i + 1]);
+        else repeater = 1;
+      else
+        repeater = atoi(strcpy(argv[i], strstr(argv[i], "-d") + 2));
       if (!repeater) repeater = 1;
+/*DEBUG:*/ fprintf(stderr, "main(): repeater is %d\n", repeater);
       create_dict(repeater);
       return 0;
     }
@@ -124,7 +126,7 @@ int main(int argc, char *argv[])
 void mkstemp2()
 {
   char *ptr;
-  if(!(ptr=tmpnam(tempname)))error_open_file("tmpnam()",8);
+  if(!(ptr=tmpnam(tempname)))error_open_file("tmpnam()", EOF_CODE_8);
 }
 /*-------------------------------------*/
 int list_empty(void)
@@ -199,10 +201,11 @@ void working_list(void)
 void create_tempfiles(void)
 {
 /*DEBUG: fprintf(stderr, "create_tempfiles() is invoked\n");*/
+  FILE* filelist;
   char str1[MAXPATH], str2[MAXPATH], *ptr;
-  unsigned i = 1, ret;
+  unsigned i = 1;
   load_separators();
-  ret = open_filelist();
+  filelist = open_filelist();
 
   char filename[MAXPATH];
   strcpy(filename, cfgdir);
@@ -213,14 +216,14 @@ void create_tempfiles(void)
   strcat(filename, FILE_W_UNLEXEM);
   load_lexems(filename, 'U');
 
-  if (ret) /*spisok s faylami ne otkrit -- poprobuem iz 'FILE_W_HREFS'*/
+  if (NULL == filelist) /*spisok s faylami ne otkrit -- poprobuem iz 'FILE_W_HREFS'*/
   {
     working_list();
     return;
   }
   while (1)
   {
-    ptr = take_file();
+    ptr = take_file(filelist);
 /*DEBUG: fprintf(std_err, "after take_file\n");*/
     if (ptr)
       if (strstr(ptr, BROKEN_SEARCH))
@@ -258,11 +261,13 @@ void remove_log(int c)
   }
 }
 /*-------------------------------------*/
-void error_open_file(char* filename,int errorcod)
+void error_open_file(char* filename, int errorcod)
 {
+  int errsv = errno;
   fprintf(std_err, "\nerror %d: can't open file '%s'!\n", errorcod, filename);
+  fprintf(std_err, "errno is %d. Message is '%s'\n", errsv, strerror(errsv));
 /*                                       FILE_W_FILES  */
-  if (errorcod != 3 && errorcod != 13 && errorcod != 1)
+  if (errorcod != EOF_CODE_3 && errorcod != EOF_CODE_13 && errorcod != EOF_CODE_1 && errorcod != EOF_CODE_31 && errorcod != EOF_CODE_32)
     my_exit(ERROR_OPEN_FILE, "see up");
 }
 /*-------------------------------------*/

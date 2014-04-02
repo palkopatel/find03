@@ -24,7 +24,7 @@ void search_word(char* pattern)
   strcpy(filename, cfgdir);
   strcat(filename, FILE_W_TEMPFILES);
   if (!(in = fopen(filename, "rt")))
-    error_open_file(filename, 9);
+    error_open_file(filename, EOF_CODE_9);
 
 /*  if(!(out=fopen(FILE_W_RESULTS,"wt")))error_open_file(FILE_W_RESULTS,10);*/
   for ( ; !feof(in); )
@@ -33,7 +33,7 @@ void search_word(char* pattern)
     *strchr(str, '*') = 0;
     strcpy(truename, str + strlen(str) + 1);
     *strchr(truename, '*') = 0;
-    if (!(tmpfil = fopen(str, "rt"))) error_open_file(str, 11);
+    if (!(tmpfil = fopen(str, "rt"))) error_open_file(str, EOF_CODE_11);
     for ( ; !feof(tmpfil); )
     {
       if (fscanf(tmpfil, "%s", word) < 1) break;
@@ -49,7 +49,6 @@ void search_word(char* pattern)
   }
   fclose(in);
 /*  fclose(out);*/
-/*  fclose(tmpfil);*/
 }
 /*-------------------------------------*/
 void create_dict(int repeater)
@@ -63,7 +62,7 @@ void create_dict(int repeater)
   strcpy(filename, cfgdir);
   strcat(filename, FILE_W_TEMPFILES);
   if(!(in = fopen(filename, "rt")))
-    error_open_file(filename, 12);
+    error_open_file(filename, EOF_CODE_12);
 
   generate_word_file(repeater);
 /*  generate_path_file();*/
@@ -76,7 +75,7 @@ void create_dict(int repeater)
     *strchr(str, '*') = 0;
     if (!(tempfile = fopen(str, "rt")))
     {
-      error_open_file(str,13);
+      error_open_file(str, EOF_CODE_13);
       continue; /*propustit' fayl*/
     }
     strcpy(nametmpfile, str);
@@ -93,6 +92,7 @@ void create_dict(int repeater)
     fclose(tempfile);
     remove(nametmpfile);
   }
+  fclose(in);
 }
 /*-------------------------------------*/
 /*void generate_path_file(void)
@@ -122,7 +122,7 @@ void generate_word_file(int repeater)
   strcpy(filename, cfgdir);
   strcat(filename, FILE_W_WORD);
   if(!(wordfile=fopen(filename, "wt")))
-    error_open_file(filename, 14);
+    error_open_file(filename, EOF_CODE_14);
 
   for(i=0; i<LEN_LEXEM; i++)
     str1[i]=' ';
@@ -231,7 +231,7 @@ void open_word_file(char access)
     strcpy(filename, cfgdir);
     strcat(filename, FILE_W_WORD);
     if(-1==(wordfile=open(filename, O_RDWR /*notlinux: | O_TEXT*/)))
-      error_open_file(filename, 15);
+      error_open_file(filename, EOF_CODE_15);
   }
   else close(wordfile);
 }
@@ -293,7 +293,7 @@ unsigned no_this_file(char* filename)
   strcpy(tmpfilename, cfgdir);
   strcat(tmpfilename, FILE_W_TEMPFILES);
   if (!(in = fopen(tmpfilename, "a+t")))
-    error_open_file(tmpfilename, 7);
+    error_open_file(tmpfilename, EOF_CODE_7);
 
   fseek(in, 0L, SEEK_SET);
   while (!feof(in))
