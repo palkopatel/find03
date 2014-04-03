@@ -17,8 +17,6 @@
 /*-------------------------------------*/
 char lex[LEN_LEX_NEW], tag[LEN_TAG], taginside[LEN_TAGINSIDE];
 char separators[256];/*dlina == chislu simvolov*/
-unsigned char T/*mozhno analozirovat'*/;
-unsigned char F/*nel'zya analozirovat'*/;
 extern char lexem[LEN_ARRAY_LEXEM][LEN_TAG];
 extern char unlexem[LEN_ARRAY_LEXEM][LEN_TAG];
 extern char FILE_4_ERRORS[MAXPATH];
@@ -100,6 +98,8 @@ int false_file_type(char* filename)
 int analiz_file(char* filename)
 {
 /*DEBUG: fprintf(stderr, "analiz_file() is invoked with filename '%s'\n", filename);*/
+  unsigned char T/*mozhno analozirovat'*/;
+  unsigned char F/*nel'zya analozirovat'*/;
   FILE* source;
   unsigned char sim, r, i;
   char linkname[MAXPATH] = "", path[MAXPATH] = "";

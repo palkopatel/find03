@@ -42,7 +42,7 @@ unsigned hash(char* word,char enter)
   if (!enter) /*kod uzhe est', no on zanyat*/
   {
     for (loop = cod = i = 0; i < len; i++)
-      cod += word[i] << 2 + word[i];
+      cod += (word[i] << 2) + word[i];
     cod *= 29; /*eto koefficient "rasseivaniya" (zhelatel'no prostoe chislo)*/
     if (cod > LEN_FILE_W_WORD) cod &= LEN_FILE_W_WORD; /*voz'meym ostatok ot deleniya :-) */
   }
