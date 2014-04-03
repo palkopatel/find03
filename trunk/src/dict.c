@@ -55,7 +55,7 @@ void create_dict(int repeater)
 {
 /*DEBUG: fprintf(stderr, "create_dict() is invoked with repeater=%d\n", repeater);*/
   FILE *tempfile, *in;
-  char str[RFLEN], str2[6], nametmpfile[MAXPATH];
+  char str[RFLEN], str2[PATTERN_LENGTH], nametmpfile[MAXPATH];
   unsigned fcod, num;
 
   char filename[MAXPATH];
@@ -134,7 +134,7 @@ void generate_word_file(int repeater)
       fprintf(wordfile, PATTERN_LOCATION, 0, 0);
     fprintf(wordfile,"\n");
   }
-  reclen=/*LEN_LEXEM*/ + 10 /*+ PLATFORM_STRING_END*/;
+  reclen=/*LEN_LEXEM*/ + PATTERN_LENGTH /*+ PLATFORM_STRING_END*/;
   fclose(wordfile);
 }
 /*-------------------------------------*/
