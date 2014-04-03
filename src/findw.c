@@ -26,9 +26,9 @@ char FILE_4_ERRORS[MAXPATH] = "2errors";
 /*-------------------------------------*/
 void print_usage_message()
 {
-  fprintf(stderr,"\nusage: findw -i <path to cfg directory> -{c|d|f {words for search}}\
+  fprintf(stderr,"\nusage: findw -i <path to cfg directory> -{c|d <repeater>|f {words for search}}\
     \n\t-c\t\t\tcreate temporary bases from file '%s'\
-    \n\t-d\t\t\tcreate dictinary (use after '-c')\
+    \n\t-d <repeater>\t\tcreate dictionary where any word can be stored not greater times than 'repeater' value (use after '-c')\
     \n\t-f {words for search}\tsearch words from temporary bases\n\n", FILE_W_FILES);
 }
 /* get path to cfg directory from app args */
