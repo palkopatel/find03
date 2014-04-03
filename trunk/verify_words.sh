@@ -1,4 +1,4 @@
-﻿#!/bin/sh
+#!/bin/sh
 
 # для варианта ./findw_t.exe -i db/ -d
 awk -F";" '{if (NF != 3) print NF}' db/3words

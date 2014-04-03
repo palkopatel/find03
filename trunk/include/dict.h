@@ -1,8 +1,8 @@
 #ifndef _DICT_H
 #define _DICT_H
 
-#define PATTERN_LOCATION "%10u=%3u;"
-#define PATTERN_LENGTH 15
+#define PATTERN_LOCATION "%7u=%3u;"
+#define PATTERN_LENGTH 12
 
 void search_word(char*);
 void create_dict(int);
