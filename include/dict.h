@@ -1,7 +1,7 @@
 #ifndef _DICT_H
 #define _DICT_H
 
-#define NUM_RECORD 5
+#define PATTERN_LOCATION "%5u=%3u;"
 
 void search_word(char*);
 void create_dict(int);

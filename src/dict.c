@@ -131,7 +131,7 @@ void generate_word_file(int repeater)
   {
     fprintf(wordfile, "%s;", str1);
     for(j=0; j<repeater; j++)
-      fprintf(wordfile, "%5u=%3u;", 0, 0);
+      fprintf(wordfile, PATTERN_LOCATION, 0, 0);
     fprintf(wordfile,"\n");
   }
   reclen=/*LEN_LEXEM*/ + 10 /*+ PLATFORM_STRING_END*/;
@@ -165,11 +165,12 @@ void save_word_2_file(int repeater, char* word, unsigned numOfFile, char numOfWo
 		       PLATFORM_STRING_END + 1) * (long)cod, SEEK_SET);
 /*      lseek(wordfile,(reclen+1)*(long)cod,SEEK_SET);*/
       for(i=strlen(word); i<LEN_LEXEM; i++)
-	word[i]=' ';
+         word[i]=' ';
       word[i]=0;
-      sprintf(str,"%s;%5u=%3u;",word,numOfFile,numOfWordreps);
-      write(wordfile,str,LEN_LEXEM+1+reclen);
-/*DEBUG: fprintf(stderr, "save_word_2_file() returns with new word\n");*/
+      sprintf(str, PATTERN_LOCATION, numOfFile, numOfWordreps);
+      sprintf(str2, "%s;%s", word, str);
+      write(wordfile, str2, LEN_LEXEM+1+reclen);
+/*DEBUG: fprintf(stderr, "save_word_2_file() returns with new word '%s'\n", str2);*/
       return;
     }
     if(strcmp(str, word))
@@ -198,7 +199,7 @@ void save_word_2_file(int repeater, char* word, unsigned numOfFile, char numOfWo
 	  if(!atoi(str))/*mesto svobodno!*/
 	  {
 	    lseek(wordfile, -reclen, SEEK_CUR);
-	    sprintf(str, "%5u=%3u;", numOfFile, numOfWordreps);
+	    sprintf(str, PATTERN_LOCATION, numOfFile, numOfWordreps);
 	    write(wordfile, str, reclen);
 /*DEBUG: fprintf(stderr, "save_word_2_file() returns after storing word\n");*/
 	    return;
@@ -212,7 +213,7 @@ void save_word_2_file(int repeater, char* word, unsigned numOfFile, char numOfWo
 			 PLATFORM_STRING_END + 1) * (long)cod +
 			 (LEN_LEXEM + 1) +
 			 reclen*minindex, SEEK_SET);
-	  sprintf(str, "%5u=%3u;", numOfFile, numOfWordreps);
+	  sprintf(str, PATTERN_LOCATION, numOfFile, numOfWordreps);
 	  write(wordfile, str, reclen);
       }
 /*else;*/ /*umret pretendent*/
@@ -234,50 +235,6 @@ void open_word_file(char access)
       error_open_file(filename, EOF_CODE_15);
   }
   else close(wordfile);
-}
-/*-------------------------------------*/
-char* format_word(char* form,unsigned numOfFile,char numOfWordreps)
-{
-  int nfiles[NUM_RECORD],nwords[NUM_RECORD],i,min,minIndex;
-  char str[100],str2[100],*ptr;
-  strcpy(str,",");
-  strcat(str,form);
-  strcpy(form,str);
-
-  for(i=NUM_RECORD-1;i>=0;i--)
-  {
-    strcpy(str,(strrchr(form,'=')+1));
-    while(strchr(str,' '))strcpy(str,strchr(str,' '));
-    nwords[i]=atoi(str);
-    strcpy(str,(strrchr(form,',')+1));
-    while(strchr(str,' '))strcpy(str,strchr(str,' '));
-    nfiles[i]=atoi(str);
-    *(strrchr(form,',')+1)=0;
-  }
-
-  for(minIndex=min=i=0;i<NUM_RECORD;i++)
-  {
-    if(!nwords[i])
-    {
-      minIndex=i;
-      break;
-    }
-    if(nwords[i]<min)
-    {
-      minIndex=i;
-      min=nwords[i];
-    }
-  }
-
-  strcpy(str,"");
-  for(i=0;i<NUM_RECORD;i++,strcat(str,str2))
-    if(i!=minIndex)sprintf(str2,",%5u=%3u",nfiles[i],nwords[i]);
-    else sprintf(str2,",%5u=%3u",numOfFile,numOfWordreps);
-
-  strcpy(str2,str+1);
-  strcat(str2,"\n");
-  ptr=str2;
-  return ptr;
 }
 /*-------------------------------------*/
 unsigned no_this_file(char* filename)
