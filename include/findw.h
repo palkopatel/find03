@@ -37,7 +37,7 @@ enum {
 
 #define LEN_ARRAY_LEXEM 100
 #define LEN_TAG 15
-#define LEN_LEXEM 20
+#define LEN_LEXEM 17
 #define MIN_LEN_OF_LEXEM 3
 #define MAX_NUM_ONE_LEXEM 64
 #define HASH_ARRAY_SEPARATOR (0xff/LEN_LEXEM)
